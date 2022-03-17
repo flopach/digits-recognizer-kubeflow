@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    color: #000000;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-left:10px;
+}
+
+.header{
+    height: 60px;
+}
+
+h1 {
+    font-size:28px;
+    font-weight:bold;
+    font-family: Helvetica, sans-serif;
+    vertical-align: middle;
+}
+
+.actions {
+    padding:15px;
+}
+
+.outcome {
+    padding:15px;
+}
