@@ -23,9 +23,9 @@ Deploy Kubeflow on Cisco Intersight and create a ML pipeline for a digit recogni
 
 ## Deploy Kubernetes Cluster with Cisco Intersight
 
-## Install Kubeflow with ICO
+[Watch an introduction to Intersight Kubernetes Service](https://www.youtube.com/watch?v=wxQRDwRO4-Y)
 
-## Install MinIO
+## Install Kubeflow with ICO
 
 ## Access the Kubeflow Central Dashboard
 
@@ -79,6 +79,37 @@ Then open `digits_recognizer_explore.` to get a feeling of the [dataset](http://
 Kubeflow Pipelines (KFP) is the most used component of Kubeflow. It allows you to create for every step or function in your ML project a reusable containerized pipeline component which can be chained together as a ML pipeline.
 
 For the digits recognizer application, the pipeline is already created with the Python SDK. You can find the code in the file `digits_recognizer_kfp.`
+
+### Setup MinIO for object storage
+
+In order to provide a single source of truth where all your working data (training and testing data, saved ML models etc.) is available to all your components, using an object storage is a recommended way. For our app, we will setup [MinIO](https://min.io).
+
+Since Kubeflow has already setup a MinIO tenant, we will leverage the **mlpipeline bucket**. But you can also deploy your own MinIO tenant.
+
+**Using Kubeflow's integrated MinIO tenant**
+
+1. you need to get access to MinIO from outside of your Kubernetes cluster:
+
+```
+kubectl port-forward -n kubeflow svc/minio-service 9000:9000
+```
+
+2. Then you need to interact with MinIO. For that you need to download the [MinIO CLI Client](https://docs.min.io/docs/minio-client-quickstart-guide.html). For example, you can install it for macOS via brew:
+
+```
+brew install minio/stable/mc
+```
+
+```
+kubectl get secret mlpipeline-minio-artifact -n kubeflow -o jsonpath="{.data.accesskey}" | base64 --decode
+```
+
+```
+kubectl get secret mlpipeline-minio-artifact -n kubeflow -o jsonpath="{.data.secretkey}" | base64 --decode
+```
+
+
+
 
 Experiment
 Runs
