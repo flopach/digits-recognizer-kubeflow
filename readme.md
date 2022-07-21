@@ -1,25 +1,29 @@
-# Recognizing digits with Kubeflow on Cisco IKS
+# MLOps Workflow: Recognizing Digits with Kubeflow on Cisco IKS
 
-Deploy Kubeflow on Cisco Intersight and create a ML pipeline for a digit recognizer application.
+This is a sample MLOps workflow featuring Kubeflow running on Cisco Intersight managed hardware. Deploy Kubeflow via Cisco Intersight and create a ML pipeline for a digit recognizer application.
 
-**Steps**:
+![](images/app-overview.png)
 
-* Create Kubernetes Cluster from scratch with Cisco Intersight
-* Deploy Kubeflow 1.5 with Cisco Intersight
-* Access Kubeflow UI
-* Create Jupyter Notebook and use it to explore the digit recognizer application
-* Create a ML pipeline with Kubeflow Pipelines
-* Create a simple web-application to mouse-draw the digits with Javascript + HTML5 canvas
-* Serve the model with Kserve
+**You need to follow these steps**:
 
-**Components**:
+1. Create a Kubernetes Cluster from scratch with Cisco Intersight
+2. Deploy Kubeflow 1.5.1 with Cisco Intersight
+3. Access the Kubeflow Central Dashboard
+4. Setup Jupyter Notebooks
+5. Setup MinIO for Object Storage
+6. Setting up Kserve
+7. Create a ML pipeline with Kubeflow Pipelines
+8. Creating & deploying the digits recognizer web application
+9. Testing the application
+
+**Used Components**:
 
 * Cisco Intersight
-* Kubeflow 1.5
+* Kubeflow 1.5.1 - Notebook, Pipelines, Kserve
 * Kubernetes 1.21
 * Hardware: Cisco UCS Server
 
-## 1. Deploy Kubernetes Cluster with Cisco Intersight
+## 1. Deploy a Kubernetes Cluster with Cisco Intersight
 
 [Watch an introduction to Intersight Kubernetes Service](https://www.youtube.com/watch?v=wxQRDwRO4-Y)
 
@@ -28,14 +32,15 @@ IKS allows you to build 100% upstream Kubernetes clusters with all necessary ser
 
 ![](images/kubernetes_workflow.png)
 
-## 2. Install Kubeflow with ICO
+> **Watch the whole process in [this video](https://www.youtube.com/watch?v=saRVAFM6H6I)!**
+
+## 2. Install Kubeflow with Intersight Cloud Orchestrator (ICO)
 
 Now that we have the cluster, we can write our deployment in ICO. We are going to do a custom installation using Kubeflow version 1.5. To do this, we will need a copy of the Kubeflow GitHub repository. We can then build our own yaml files using kustomize, which we can then apply to our Kubernetes cluster. Our ICO workflow mirrors these same three steps.
 
 ![](images/kubeflow_workflow.png)
 
 > **Watch the whole process in [this video](https://www.youtube.com/watch?v=saRVAFM6H6I)!**
-
 
 You can check with kubectl if all pods are coming up successfully: 
 
@@ -178,7 +183,7 @@ kubeflow                    workflow-controller-5cb67bb9db-7bfqc                
 
 ## 3. Access the Kubeflow Central Dashboard
 
-Once you have everything deployed, you can do a port-forward with
+Once you have everything deployed, you can do a port-forward with the following command:
 
 ```
 kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
@@ -194,7 +199,7 @@ and access the Kubeflow Central Dashboard remotely at [http://localhost:8080](ht
 
 In this demo you will access the Kubeflow Pipeline via the Python SDK in a Jupyter notebook. Therefore, one additional setting is required to allow this.
 
-At first insert your Kubeflow username in this Kubernetes manifest (your Kubeflow username is also the name of a Kubernetes namespace where all your user-specific containers will be spun up): [kubeflow_config/access_kfp_from_jupyter_notebook.yaml](kubeflow_config/access_kfp_from_jupyter_notebook.yaml). You can the exact namespace name under the **Manage Contributers** menu.
+At first insert your Kubeflow username in this Kubernetes manifest (your Kubeflow username is also the name of a Kubernetes namespace where all your user-specific containers will be spun up): [kubeflow_config/access_kfp_from_jupyter_notebook.yaml](kubeflow_config/access_kfp_from_jupyter_notebook.yaml). You can the extract namespace name under the **Manage Contributers** menu.
 
 Once done, apply it with this command:
 
@@ -212,7 +217,9 @@ Don't forget to enable this configuration:
 
 ![](images/kf_kfp_config.png)
 
-### Cloning the code from Github & exploring the dataset
+### Access Jupyter Notebooks & Cloning the code from Github
+
+Go to **Notebooks** and click on **CONNECT** to start the Jupyter Notebook container.
 
 With Juypter Lab you have access to a terminal and Python notebook in your web browser. This is where your data science team and you can collaborate on exploring that dataset and also create your Kubeflow Pipeline.
 
@@ -222,11 +229,28 @@ At first, let's clone this repository so you have access to the code. You can us
 git clone https://github.com/flopach/digits-recognizer-kubeflow-intersight
 ```
 
-![](images/kf_clone_notebook.png)
+image
 
-Then open `digits_recognizer_explore.` to get a feeling of the [dataset](http://yann.lecun.com/exdb/mnist/) and its format.
+Then open `digits_recognizer_notebook.ipynb` to get a feeling of the [dataset](http://yann.lecun.com/exdb/mnist/) and its format.
 
-## Setup MinIO for object storage
+### Update Python Packages
+
+Double check if you have the latest versions of the Kubeflow python packages are installed:
+
+`pip list` should list these latest versions:
+
+```
+kfp                      1.8.12
+kfp-pipeline-spec        0.1.13
+kfp-server-api           1.8.2
+kserve                   0.8.0
+```
+
+### Behind a Proxy fix (optional)
+
+If you are behind a proxy, apply the [kubeflow_configs/proxy-fix-notebooks.yaml](kubeflow_configs/proxy-fix-notebooks.yaml) fix to your kubernetes cluster.
+
+## 5. Setup MinIO for Object Storage
 
 In order to provide a single source of truth where all your working data (training and testing data, saved ML models etc.) is available to all your components, using an object storage is a recommended way. For our app, we will setup [MinIO](https://min.io).
 
@@ -258,50 +282,85 @@ kubectl port-forward -n kubeflow svc/minio-service 9000:9000
 * secretkey: **minio123**
 * bucket: **mlpipeline**
 
-## Get started with Kubeflow Pipelines
+## 6. Setting up Kserve
 
-Kubeflow Pipelines (KFP) is the most used component of Kubeflow. It allows you to create for every step or function in your ML project a reusable containerized pipeline component which can be chained together as a ML pipeline.
+In this step we are setting up Kserve for model inference serving. The Kserve container will be created when we are executing our ML pipeline which will happen in the next step.
 
-For the digits recognizer application, the pipeline is already created with the Python SDK. You can find the code in the file `digits_recognizer_pipeline.ipynb`
+### Set minIO secret for kserve
 
-1. Got to **Notebooks** and click on **CONNECT** to start the Jupyter Notebook container.
-2. Upload the Notebook File directly in the browser to access it.
-3. Also, double check if the correct version of the Kubeflow python packages are installed:
-
-`pip list`
+We need to apply this yaml file so that the created model which is saved on minIO can be accessed by Kserve. Kserve will copy the saved model in the newly created inference container.
 
 ```
-kfp                      1.6.3
-kfp-pipeline-spec        0.1.13
-kfp-server-api           1.6.0
+kubectl apply -f kubeflow_configs/set-minio-kserve-secret.yaml
 ```
 
-## Creating the digits recognizer web application
+### Troubleshooting: Can't fetch docker image
 
-You can find the digits recognizer app in the folder `web_app`.
-
-
-## Serving the ML model with Kserve
+If kserve can't fetch the docker image at container startup, you need to edit the configuration:
 
 `kubectl -n knative-serving edit configmap config-deployment`
 
-Change to:
+Add the key-value *registriesSkippingTagResolving* directly below data and apply:
 
 ```
 apiVersion: v1
 data:
-  registriesSkippingTagResolving: "index.docker.io"
+registriesSkippingTagResolving: "index.docker.io"
   _example: |
     ################################
     #                              #
     #    EXAMPLE CONFIGURATION     #
     #                              #
     ################################
+...
 ```
 
-Find more here: https://kserve.github.io/website/developer/debug/#inference-service-fails-to-start 
+Find more troubleshooting information: [https://kserve.github.io/website/developer/debug/](https://kserve.github.io/website/developer/debug/)
 
-_work in progress_
+## 7. Create a ML pipeline with Kubeflow Pipelines
+
+Kubeflow Pipelines (KFP) is the most used component of Kubeflow. It allows you to create for every step or function in your ML project a reusable containerized pipeline component which can be chained together as a ML pipeline.
+
+For the digits recognizer application, the pipeline is already created with the Python SDK. You can find the code in the file `digits_recognizer_pipeline.ipynb`
+
+### Create the Kubeflow Pipline
+
+Here is a more detailed example of Kubeflow Pipelines:
+[https://github.com/StatCan/aaw-contrib-jupyter-notebooks/blob/master/kfp-basics/demo_kfp_lightweight_components.ipynb]()
+
+## 8. Creating & deploying the digits recognizer web application
+
+Finally we need to create and deploy the web application for inference serving.
+
+### Web Application
+
+You can find the digits recognizer app in the folder `web_app`. It is a simple webpage using javascript and the tensorflow js library.
+
+### Deploy Web Application
+
+You can deploy the web-application by applying this yaml file.
+
+## 9. Test the application
+
+xxx
+
+## Versioning
+
+**1.0** - Sample ML workflow with Kubeflow 1.5
+
+## Authors
+
+* **Flo Pachinger** - *Kubeflow Part* - [flopach](https://github.com/flopach)
+* **Michael Maurer** - *Intersight Part* - [flopach](https://github.com/flopach)
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+
+## Further Links
+
+* [Cisco DevNet Website](https://developer.cisco.com)
+
 
 
 

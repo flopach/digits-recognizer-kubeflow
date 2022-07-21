@@ -1,0 +1,10 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: "InferenceService"
+metadata:
+  name: digits-recognizer
+  namespace: kubeflow-user-example-com
+spec:
+  predictor:
+    serviceAccountName: sa-minio-kserve
+    tensorflow:
+      storageUri: s3://mlpipeline/models/detect-digits/
