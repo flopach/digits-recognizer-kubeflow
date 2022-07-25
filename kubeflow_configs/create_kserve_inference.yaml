@@ -3,6 +3,8 @@ kind: "InferenceService"
 metadata:
   name: digits-recognizer
   namespace: kubeflow-user-example-com
+  annotations:
+    sidecar.istio.io/inject: "false"
 spec:
   predictor:
     serviceAccountName: sa-minio-kserve

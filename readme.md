@@ -342,7 +342,7 @@ You can deploy the web-application by applying this yaml file.
 
 ## 9. Test the application
 
-xxx
+Soon to be updated
 
 ## Versioning
 
