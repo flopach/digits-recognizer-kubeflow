@@ -13,21 +13,6 @@ margin-left:10px;
 let offsetY = 60;
 let offsetX = 10;
 
-/*
-Kserve erlaubt nicht CORS
-
-next steps: create container in kubeflow-exmaple user namespace
-try it from there
-
-service 1: nginx webserver mit app
-service 2: kserve endpunkt
-
-
-*/
-
-
-
-
 addEventListener('click', e => {
     if (e.target.id === 'clear') {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -51,13 +36,9 @@ addEventListener('click', e => {
 
         console.log(img_data)
 
-        // query to inference model (Kserve)
-        // http://digits-recognizer.kubeflow-user-example-com.svc.cluster.local/v1/models/digits-recognizer:predict
-
         fetch('http://localhost:8080/v1/models/digits-recognizer:predict', {
             method: 'POST',
             headers: {
-                'Cookie': 'authservice_session=MTY1ODMzOTM5OXxOd3dBTkROWlNVSk9WRWN5VlZwRlJVOVJUVW8yTlZkR1QxWkVXVFpPVnpaTlYxVkdUMUJIVFRSV00waEdORVJQVjAwM1JFWldOa0U9fN2XNPCfsO42EOW8QtAhuufn74t0GmHLufW81wwgC5k1',
                 'Host': 'digits-recognizer.kubeflow-user-example-com.example.com'
             },
             body: JSON.stringify(img_data)
@@ -70,7 +51,7 @@ addEventListener('click', e => {
             console.error('Error:', error);
         });
 
-        document.getElementById("results").innerHTML = "Clicked! "+img_reshaped;
+        document.getElementById("results").innerHTML = "Example Output";
     }
 });
 

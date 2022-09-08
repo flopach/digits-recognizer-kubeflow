@@ -2,45 +2,27 @@
 
 This is a sample MLOps workflow featuring Kubeflow running on Cisco Intersight managed hardware. Deploy Kubeflow via Cisco Intersight and create a ML pipeline for a digit recognizer application.
 
-![](images/app-overview.png)
+![](images/app-overview.jpg)
 
 **You need to follow these steps**:
 
-1. Create a Kubernetes Cluster from scratch with Cisco Intersight
-2. Deploy Kubeflow 1.5.1 with Cisco Intersight
-3. Access the Kubeflow Central Dashboard
-4. Setup Jupyter Notebooks
-5. Setup MinIO for Object Storage
-6. Setting up Kserve
-7. Create a ML pipeline with Kubeflow Pipelines
-8. Creating & deploying the digits recognizer web application
-9. Testing the application
+1. Deploy a Kubernetes Cluster and install Kubeflow
+2. Access the Kubeflow Central Dashboard
+3. Setup Jupyter Notebooks
+4. Setup MinIO for Object Storage
+5. Setting up Kserve
+6. Create a ML pipeline with Kubeflow Pipelines
+7. Test the model inference
 
 **Used Components**:
 
-* Cisco Intersight
 * Kubeflow 1.5.1 - Notebook, Pipelines, Kserve
 * Kubernetes 1.21
 * Hardware: Cisco UCS Server
 
-## 1. Deploy a Kubernetes Cluster with Cisco Intersight
+## 1. Deploy a Kubernetes Cluster and install Kubeflow
 
-[Watch an introduction to Intersight Kubernetes Service](https://www.youtube.com/watch?v=wxQRDwRO4-Y)
-
-We will use the Intersight Kubernetes Service (IKS) to build the Kubernetes cluster and the Intersight Cloud Orchestrator (ICO) to write a deployment workflow for Kubeflow.
-IKS allows you to build 100% upstream Kubernetes clusters with all necessary services for production. Monitoring comes out of the box, networking and ingress load balancers are already set up and service mesh management is already included.
-
-![](images/kubernetes_workflow.png)
-
-> **Watch the whole process in [this video](https://www.youtube.com/watch?v=saRVAFM6H6I)!**
-
-## 2. Install Kubeflow with Intersight Cloud Orchestrator (ICO)
-
-Now that we have the cluster, we can write our deployment in ICO. We are going to do a custom installation using Kubeflow version 1.5. To do this, we will need a copy of the Kubeflow GitHub repository. We can then build our own yaml files using kustomize, which we can then apply to our Kubernetes cluster. Our ICO workflow mirrors these same three steps.
-
-![](images/kubeflow_workflow.png)
-
-> **Watch the whole process in [this video](https://www.youtube.com/watch?v=saRVAFM6H6I)!**
+Install Kubeflow on your Kubernetes cluster. You can find more information in the [Kubeflow docs](https://www.kubeflow.org/docs/started/installing-kubeflow/).
 
 You can check with kubectl if all pods are coming up successfully: 
 
@@ -51,39 +33,6 @@ auth                        dex-5ddf47d88d-cksfj                                
 cert-manager                cert-manager-7b8c77d4bd-m4zht                                     1/1     Running     0          3h7m
 cert-manager                cert-manager-cainjector-7c744f57b5-nzfb4                          1/1     Running     0          3h7m
 cert-manager                cert-manager-webhook-fcd445bc4-7fkj4                              1/1     Running     0          3h7m
-cluster-registry            essential-cluster-registry-controller-7f57bcd76-6qkms             1/1     Running     0          22h
-iks                         apply-cloud-provider-97dsf                                        0/1     Completed   0          22h
-iks                         apply-cni-j6wc4                                                   0/1     Completed   0          22h
-iks                         apply-essential-cert-ca-qgmjk                                     0/1     Completed   0          22h
-iks                         apply-essential-cert-manager-dw79m                                0/1     Completed   0          22h
-iks                         apply-essential-cluster-registry-dg7dz                            0/1     Completed   0          22h
-iks                         apply-essential-metallb-85xv2                                     0/1     Completed   0          22h
-iks                         apply-essential-nginx-ingress-lz9qc                               0/1     Completed   0          22h
-iks                         apply-essential-registry-7rgk5                                    0/1     Completed   0          22h
-iks                         apply-essential-vsphere-csi-2s59w                                 0/1     Completed   0          22h
-iks                         ccp-helm-operator-cf8cdfb5f-nf84p                                 1/1     Running     0          22h
-iks                         ccp-registry-updater-essential-cert-manager-0                     1/1     Running     0          22h
-iks                         ccp-registry-updater-essential-cluster-registry-0                 1/1     Running     0          22h
-iks                         ccp-registry-updater-essential-metallb-0                          1/1     Running     0          22h
-iks                         ccp-registry-updater-essential-nginx-ingress-0                    1/1     Running     0          22h
-iks                         essential-cert-manager-5c5cd999d7-2rnj9                           1/1     Running     0          22h
-iks                         essential-cert-manager-cainjector-84bc8567bd-t4npd                1/1     Running     0          22h
-iks                         essential-cert-manager-webhook-7dbfb9f587-85f47                   1/1     Running     0          22h
-iks                         essential-metallb-controller-798b744d4f-t66tw                     1/1     Running     0          22h
-iks                         essential-metallb-speaker-5bdsm                                   1/1     Running     0          22h
-iks                         essential-metallb-speaker-98qmp                                   1/1     Running     0          22h
-iks                         essential-metallb-speaker-ms6hx                                   1/1     Running     0          22h
-iks                         essential-metallb-speaker-nbq89                                   1/1     Running     0          22h
-iks                         essential-metallb-speaker-ppz95                                   1/1     Running     0          22h
-iks                         essential-metallb-speaker-wgzld                                   1/1     Running     0          22h
-iks                         essential-metallb-speaker-zshfz                                   1/1     Running     0          22h
-iks                         essential-nginx-ingress-ingress-nginx-controller-7jrsr            1/1     Running     0          22h
-iks                         essential-nginx-ingress-ingress-nginx-controller-l69rv            1/1     Running     0          22h
-iks                         essential-nginx-ingress-ingress-nginx-controller-mqr7q            1/1     Running     0          22h
-iks                         essential-nginx-ingress-ingress-nginx-controller-s4tls            1/1     Running     0          22h
-iks                         essential-nginx-ingress-ingress-nginx-defaultbackend-7d98f5xbbf   1/1     Running     0          22h
-iks                         essential-registry-docker-registry-75b68947d5-gnb94               1/1     Running     0          22h
-iks                         populate-registry-627468e37a6f722d304ce734-l749s                  0/1     Completed   0          22h
 istio-system                authservice-0                                                     1/1     Running     0          3h7m
 istio-system                cluster-local-gateway-64f58f66cb-ncnkd                            1/1     Running     0          3h7m
 istio-system                istio-ingressgateway-8577c57fb6-c8t9p                             1/1     Running     0          3h7m
@@ -102,49 +51,6 @@ knative-serving             istio-webhook-578b6b7654-s445x                      
 knative-serving             networking-istio-6b88f745c-887mz                                  2/2     Running     0          3h7m
 knative-serving             webhook-6fffdc4d78-ml2mn                                          2/2     Running     0          3h7m
 kserve                      kserve-controller-manager-0                                       2/2     Running     0          3h7m
-kube-system                 calico-kube-controllers-7f6f95d7c9-5gj8d                          1/1     Running     0          22h
-kube-system                 calico-node-4x5cz                                                 1/1     Running     0          22h
-kube-system                 calico-node-5z2cp                                                 1/1     Running     0          22h
-kube-system                 calico-node-cr9p7                                                 1/1     Running     0          22h
-kube-system                 calico-node-fh8q9                                                 1/1     Running     0          22h
-kube-system                 calico-node-gtmn7                                                 1/1     Running     0          22h
-kube-system                 calico-node-kk8kh                                                 1/1     Running     0          22h
-kube-system                 calico-node-xvlpr                                                 1/1     Running     0          22h
-kube-system                 ccp-vip-manager-kubeflow-demo-controlpl-8df153f1d3                1/1     Running     0          22h
-kube-system                 ccp-vip-manager-kubeflow-demo-controlpl-de8b27459d                1/1     Running     0          22h
-kube-system                 ccp-vip-manager-kubeflow-demo-controlpl-fd5e754966                1/1     Running     0          22h
-kube-system                 coredns-6bf949b6cb-4f7pf                                          1/1     Running     0          22h
-kube-system                 coredns-6bf949b6cb-vt958                                          1/1     Running     0          22h
-kube-system                 etcd-kubeflow-demo-controlpl-8df153f1d3                           1/1     Running     0          22h
-kube-system                 etcd-kubeflow-demo-controlpl-de8b27459d                           1/1     Running     0          22h
-kube-system                 etcd-kubeflow-demo-controlpl-fd5e754966                           1/1     Running     0          22h
-kube-system                 kube-apiserver-kubeflow-demo-controlpl-8df153f1d3                 1/1     Running     2          22h
-kube-system                 kube-apiserver-kubeflow-demo-controlpl-de8b27459d                 1/1     Running     1          22h
-kube-system                 kube-apiserver-kubeflow-demo-controlpl-fd5e754966                 1/1     Running     0          22h
-kube-system                 kube-controller-manager-kubeflow-demo-controlpl-8df153f1d3        1/1     Running     0          22h
-kube-system                 kube-controller-manager-kubeflow-demo-controlpl-de8b27459d        1/1     Running     0          22h
-kube-system                 kube-controller-manager-kubeflow-demo-controlpl-fd5e754966        1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-controlpl-8df153f1d3                     1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-controlpl-de8b27459d                     1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-controlpl-fd5e754966                     1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-worker-po-438cf118cd                     1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-worker-po-6789fafcc8                     1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-worker-po-8272d641ca                     1/1     Running     0          22h
-kube-system                 kube-proxy-kubeflow-demo-worker-po-bee059c8f5                     1/1     Running     0          22h
-kube-system                 kube-scheduler-kubeflow-demo-controlpl-8df153f1d3                 1/1     Running     0          22h
-kube-system                 kube-scheduler-kubeflow-demo-controlpl-de8b27459d                 1/1     Running     0          22h
-kube-system                 kube-scheduler-kubeflow-demo-controlpl-fd5e754966                 1/1     Running     0          22h
-kube-system                 vsphere-cpi-8756g                                                 1/1     Running     0          22h
-kube-system                 vsphere-cpi-qnwrz                                                 1/1     Running     0          22h
-kube-system                 vsphere-cpi-xsdwb                                                 1/1     Running     0          22h
-kube-system                 vsphere-csi-controller-7c68bf98cc-gbfr7                           5/5     Running     0          22h
-kube-system                 vsphere-csi-node-5d282                                            3/3     Running     0          22h
-kube-system                 vsphere-csi-node-6z47f                                            3/3     Running     0          22h
-kube-system                 vsphere-csi-node-bmbr2                                            3/3     Running     0          22h
-kube-system                 vsphere-csi-node-l82hj                                            3/3     Running     0          22h
-kube-system                 vsphere-csi-node-m29z4                                            3/3     Running     0          22h
-kube-system                 vsphere-csi-node-ppmf8                                            3/3     Running     0          22h
-kube-system                 vsphere-csi-node-vqfwg                                            3/3     Running     0          22h
 kubeflow-user-example-com   ml-pipeline-ui-artifact-d57bd98d7-s84t4                           2/2     Running     0          174m
 kubeflow-user-example-com   ml-pipeline-visualizationserver-65f5bfb4bf-bmtg8                  2/2     Running     0          174m
 kubeflow                    admission-webhook-deployment-7df7558c67-d7mfm                     1/1     Running     0          3h7m
@@ -181,7 +87,7 @@ kubeflow                    volumes-web-app-deployment-87484c848-rl4rl          
 kubeflow                    workflow-controller-5cb67bb9db-7bfqc                              2/2     Running     2          3h7m
 ```
 
-## 3. Access the Kubeflow Central Dashboard
+## 2. Access the Kubeflow Central Dashboard
 
 Once you have everything deployed, you can do a port-forward with the following command:
 
@@ -193,7 +99,7 @@ and access the Kubeflow Central Dashboard remotely at [http://localhost:8080](ht
 
 ![](images/kf_central_dashboard.png)
 
-## 4. Setup Jupyter Notebooks
+## 3. Setup Jupyter Notebooks
 
 ### Allow access to Kubeflow Pipelines from Jupyter Notebooks
 
@@ -250,7 +156,7 @@ kserve                   0.8.0
 
 If you are behind a proxy, apply the [kubeflow_configs/proxy-fix-notebooks.yaml](kubeflow_configs/proxy-fix-notebooks.yaml) fix to your kubernetes cluster.
 
-## 5. Setup MinIO for Object Storage
+## 4. Setup MinIO for Object Storage
 
 In order to provide a single source of truth where all your working data (training and testing data, saved ML models etc.) is available to all your components, using an object storage is a recommended way. For our app, we will setup [MinIO](https://min.io).
 
@@ -282,7 +188,7 @@ kubectl port-forward -n kubeflow svc/minio-service 9000:9000
 * secretkey: **minio123**
 * bucket: **mlpipeline**
 
-## 6. Setting up Kserve
+## 5. Setting up Kserve
 
 In this step we are setting up Kserve for model inference serving. The Kserve container will be created when we are executing our ML pipeline which will happen in the next step.
 
@@ -317,7 +223,7 @@ registriesSkippingTagResolving: "index.docker.io"
 
 Find more troubleshooting information: [https://kserve.github.io/website/developer/debug/](https://kserve.github.io/website/developer/debug/)
 
-## 7. Create a ML pipeline with Kubeflow Pipelines
+## 6. Create a ML pipeline with Kubeflow Pipelines
 
 Kubeflow Pipelines (KFP) is the most used component of Kubeflow. It allows you to create for every step or function in your ML project a reusable containerized pipeline component which can be chained together as a ML pipeline.
 
@@ -328,21 +234,13 @@ For the digits recognizer application, the pipeline is already created with the 
 Here is a more detailed example of Kubeflow Pipelines:
 [https://github.com/StatCan/aaw-contrib-jupyter-notebooks/blob/master/kfp-basics/demo_kfp_lightweight_components.ipynb]()
 
-## 8. Creating & deploying the digits recognizer web application
+## 7. Test the model inference
 
-Finally we need to create and deploy the web application for inference serving.
+No you can test the model inference. The simplest way is to use a Python script directly in the Jupyter Notebook:
 
-### Web Application
+![](images/test-inference.png)
 
-You can find the digits recognizer app in the folder `web_app`. It is a simple webpage using javascript and the tensorflow js library.
-
-### Deploy Web Application
-
-You can deploy the web-application by applying this yaml file.
-
-## 9. Test the application
-
-Soon to be updated
+Alternatively, you can use the web application which you can find in the `web_app` folder. Be aware that some configuration needs to be done if you want to access the inference service from outside of the cluster.
 
 ## Versioning
 
@@ -351,7 +249,6 @@ Soon to be updated
 ## Authors
 
 * **Flo Pachinger** - *Kubeflow Part* - [flopach](https://github.com/flopach)
-* **Michael Maurer** - *Intersight Part* - [flopach](https://github.com/flopach)
 
 ## License
 
