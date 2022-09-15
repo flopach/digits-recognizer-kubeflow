@@ -51,7 +51,7 @@ addEventListener('click', e => {
             console.error('Error:', error);
         });
 
-        document.getElementById("results").innerHTML = "Example Output";
+        document.getElementById("results").innerHTML = "Example Output"; //Output still needs to be formatted!
     }
 });
 
