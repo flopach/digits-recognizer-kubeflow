@@ -1,6 +1,6 @@
 # MLOps Workflow: Recognizing Digits with Kubeflow
 
-This is a sample MLOps workflow featuring Kubeflow running on Cisco Intersight managed hardware. Deploy Kubeflow via Cisco Intersight and create a ML pipeline for a digit recognizer application.
+The [MNIST database of handwritten digits](http://yann.lecun.com/exdb/mnist/) is the Hello-World of deep learning and therefore the best example to focus not on the ML model itself, but on creating the ML pipeline. The goal here is to create an automated ML pipeline for getting the data, data pre-processing, and creating and serving the ML model. You can see an overview of the digits recognizer application below.
 
 ![](images/app-overview.jpg)
 
@@ -17,8 +17,14 @@ This is a sample MLOps workflow featuring Kubeflow running on Cisco Intersight m
 **Used Components**:
 
 * Kubeflow 1.5.1 - Notebook, Pipelines, Kserve
+* MinIO
 * Kubernetes 1.21
 * Hardware: Cisco UCS Server
+
+[![](images/youtube.png))](https://youtu.be/6wWdNg0GMV4)
+
+*Check out the [Walk-through Video](https://youtu.be/6wWdNg0GMV4)!*
+
 
 ## 1. Deploy a Kubernetes Cluster and install Kubeflow
 
@@ -135,8 +141,6 @@ At first, let's clone this repository so you have access to the code. You can us
 git clone https://github.com/flopach/digits-recognizer-kubeflow-intersight
 ```
 
-image
-
 Then open `digits_recognizer_notebook.ipynb` to get a feeling of the [dataset](http://yann.lecun.com/exdb/mnist/) and its format.
 
 ### Update Python Packages
@@ -229,14 +233,16 @@ Kubeflow Pipelines (KFP) is the most used component of Kubeflow. It allows you t
 
 For the digits recognizer application, the pipeline is already created with the Python SDK. You can find the code in the file `digits_recognizer_pipeline.ipynb`
 
-### Create the Kubeflow Pipline
+![](images/pipeline.png)
 
 Here is a more detailed example of Kubeflow Pipelines:
-[https://github.com/StatCan/aaw-contrib-jupyter-notebooks/blob/master/kfp-basics/demo_kfp_lightweight_components.ipynb]()
+[https://github.com/StatCan/aaw-contrib-jupyter-notebooks/blob/master/kfp-basics/demo_kfp_lightweight_components.ipynb](https://github.com/StatCan/aaw-contrib-jupyter-notebooks/blob/master/kfp-basics/demo_kfp_lightweight_components.ipynb)
+
+![](images/kserve.png)
 
 ## 7. Test the model inference
 
-No you can test the model inference. The simplest way is to use a Python script directly in the Jupyter Notebook:
+Now you can test the model inference. The simplest way is to use a Python script directly in the Jupyter Notebook:
 
 ![](images/test-inference.png)
 
@@ -244,11 +250,11 @@ Alternatively, you can use the web application which you can find in the `web_ap
 
 ## Versioning
 
-**1.0** - Sample ML workflow with Kubeflow 1.5
+**1.0** - Sample ML workflow with Kubeflow 1.5.1
 
 ## Authors
 
-* **Flo Pachinger** - *Kubeflow Part* - [flopach](https://github.com/flopach)
+* **Flo Pachinger** - [flopach](https://github.com/flopach)
 
 ## License
 
