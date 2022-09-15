@@ -21,8 +21,7 @@ The [MNIST database of handwritten digits](http://yann.lecun.com/exdb/mnist/) is
 * Kubernetes 1.21
 * Hardware: Cisco UCS Server
 
-[![](images/youtube.png))](https://youtu.be/6wWdNg0GMV4)
-
+[![youtube](images/youtube.png)](https://youtu.be/6wWdNg0GMV4)
 *Check out the [Walk-through Video](https://youtu.be/6wWdNg0GMV4)!*
 
 
