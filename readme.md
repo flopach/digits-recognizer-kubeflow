@@ -141,9 +141,9 @@ Then open `digits_recognizer_notebook.ipynb` to get a feeling of the [dataset](h
 
 ### Update Python Packages
 
-Double check if you have the latest versions of the Kubeflow python packages are installed:
+Once started, double check if the latest versions of the Kubeflow python packages are installed within the Jupyter notebook container:
 
-`pip list` should list these latest versions:
+`pip list` should list versions above these::
 
 ```
 kfp                      1.8.12
