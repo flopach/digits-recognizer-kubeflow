@@ -1,4 +1,4 @@
-Recognizing Digits with Kubeflow on Cisco IKS
+Recognizing Digits with Kubeflow
 =====================================
 MLOps Workflow Demo
 

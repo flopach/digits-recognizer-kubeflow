@@ -1,4 +1,4 @@
-# MLOps Workflow: Recognizing Digits with Kubeflow on Cisco IKS
+# MLOps Workflow: Recognizing Digits with Kubeflow
 
 This is a sample MLOps workflow featuring Kubeflow running on Cisco Intersight managed hardware. Deploy Kubeflow via Cisco Intersight and create a ML pipeline for a digit recognizer application.
 
