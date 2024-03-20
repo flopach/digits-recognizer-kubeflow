@@ -27,7 +27,7 @@ The [MNIST database of handwritten digits](http://yann.lecun.com/exdb/mnist/) is
 
 ## 1. Deploy a Kubernetes Cluster and install Kubeflow
 
-Install Kubeflow on your Kubernetes cluster. You can find more information in the [Kubeflow docs](https://www.kubeflow.org/docs/started/installing-kubeflow/).
+Install Kubeflow on your Kubernetes cluster. You can find more information in the [Kubeflow docs](https://www.kubeflow.org/docs/started/installing-kubeflow/) and this [Blog](https://dagshub.com/blog/how-to-install-kubeflow-locally/).
 
 You can check with kubectl if all pods are coming up successfully: 
 
